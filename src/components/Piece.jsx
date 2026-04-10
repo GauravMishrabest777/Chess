@@ -20,10 +20,10 @@ export default function Piece({ type, color }) {
       className={`
         flex items-center justify-center w-full h-full cursor-grab active:cursor-grabbing select-none 
         hover:scale-110 transition-transform duration-200
-        ${isPawn ? 'text-[2.5rem] md:text-5xl' : 'text-5xl md:text-6xl'}
-        ${isWhite ? 'text-slate-100 drop-shadow-[0_3px_3px_rgba(0,0,0,0.8)]' : 'text-zinc-900 drop-shadow-[0_2px_4px_rgba(255,255,255,0.4)]'}
+        ${isPawn ? 'text-3xl md:text-4xl' : 'text-5xl md:text-6xl'}
+        ${isWhite ? 'text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]' : 'text-black drop-shadow-[0_2px_4px_rgba(255,255,255,0.6)]'}
       `}
-      style={isWhite ? { WebkitTextStroke: '1.5px #27272a' } : { WebkitTextStroke: '1px #e4e4e7' }}
+      style={isWhite ? { WebkitTextStroke: '1.5px #000' } : { WebkitTextStroke: '1px #fff' }}
     >
       {PIECE_SYMBOLS[type]}
     </div>

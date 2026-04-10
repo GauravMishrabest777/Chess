@@ -114,6 +114,23 @@ function App() {
         kingInCheck={kingInCheck}
       />
 
+      {gameOver.isOver && (
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50">
+          <div className="bg-slate-900 p-8 md:p-12 rounded-2xl shadow-2xl text-center border border-amber-500/30">
+            <h2 className="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-200 to-yellow-500 mb-6 drop-shadow-lg">
+              Game Over!
+            </h2>
+            <p className="text-2xl text-slate-200 mb-8 font-semibold">{gameOver.reason}</p>
+            <button 
+              onClick={restartGame}
+              className="px-8 py-3 bg-emerald-600 hover:bg-emerald-500 text-xl text-white font-bold rounded shadow-[0_0_15px_rgba(16,185,129,0.5)] hover:shadow-[0_0_25px_rgba(16,185,129,0.7)] transition-all duration-200 active:scale-95"
+            >
+              Play Again
+            </button>
+          </div>
+        </div>
+      )}
+
       <div className="mt-8 flex gap-4">
         <button 
           onClick={restartGame}
