@@ -1,24 +1,16 @@
 @import "tailwindcss";
 
 @theme {
-  --color-board-light: #cbd5e1; /* slate-300 */
-  --color-board-dark: #334155; /* slate-700 */
-  --color-board-emerald-light: #a7f3d0; /* emerald-200 */
-  --color-board-emerald-dark: #059669; /* emerald-600 */
+  --color-board-wood-light: #eedc9a;
+  --color-board-wood-dark: #8b5a2b;
 }
 
 @layer utilities {
-  .square-light {
-    @apply bg-board-light text-slate-800;
+  .square-wood-light {
+    @apply bg-[var(--color-board-wood-light)] text-orange-950;
   }
-  .square-dark {
-    @apply bg-board-dark text-slate-100;
-  }
-  .square-emerald-light {
-    @apply bg-[var(--color-board-emerald-light)] text-emerald-900;
-  }
-  .square-emerald-dark {
-    @apply bg-[var(--color-board-emerald-dark)] text-emerald-50;
+  .square-wood-dark {
+    @apply bg-[var(--color-board-wood-dark)] text-orange-50;
   }
 }
 

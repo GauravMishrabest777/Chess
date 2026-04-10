@@ -7,8 +7,8 @@ export default function Square({
   onClick 
 }) {
   
-  const baseColor = isLight ? 'square-emerald-light' : 'square-emerald-dark';
-  const selectedClass = isSelected ? 'bg-amber-200/80' : '';
+  const baseColor = isLight ? 'square-wood-light' : 'square-wood-dark';
+  const selectedClass = isSelected ? 'bg-yellow-400/70' : '';
   const checkClass = isCheckSquare ? 'bg-red-500/80' : '';
   
   return (

@@ -11,17 +11,19 @@ const PIECE_SYMBOLS = {
 
 export default function Piece({ type, color }) {
   const isWhite = color === COLORS.WHITE;
+  const isPawn = type === PIECES.PAWN;
   
   // We use solid unicode characters and style their color.
-  // We can add a drop shadow for depth.
+  // We can add a drop shadow for depth and make pawns smaller.
   return (
     <div 
       className={`
-        flex items-center justify-center w-full h-full text-5xl cursor-grab active:cursor-grabbing select-none 
+        flex items-center justify-center w-full h-full cursor-grab active:cursor-grabbing select-none 
         hover:scale-110 transition-transform duration-200
-        ${isWhite ? 'text-slate-100 drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)]' : 'text-slate-900 drop-shadow-[0_2px_2px_rgba(255,255,255,0.4)]'}
+        ${isPawn ? 'text-[2.5rem] md:text-5xl' : 'text-5xl md:text-6xl'}
+        ${isWhite ? 'text-slate-100 drop-shadow-[0_3px_3px_rgba(0,0,0,0.8)]' : 'text-zinc-900 drop-shadow-[0_2px_4px_rgba(255,255,255,0.4)]'}
       `}
-      style={isWhite ? { WebkitTextStroke: '1px #334155' } : { WebkitTextStroke: '1px #cbd5e1' }}
+      style={isWhite ? { WebkitTextStroke: '1.5px #27272a' } : { WebkitTextStroke: '1px #e4e4e7' }}
     >
       {PIECE_SYMBOLS[type]}
     </div>
