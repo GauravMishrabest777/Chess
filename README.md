@@ -1,16 +1,49 @@
-# React + Vite
+# Modern React Chess ♟️
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A fully-functional, single-page, modern Chess web application built from scratch with React and Tailwind CSS. The app features state-of-the-art styling, comprehensive chess movement validation, and Check/Checkmate logic systems entirely in pure JavaScript.
 
-Currently, two official plugins are available:
+## ✨ Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- **Modern UI/UX**: Sleek, fully responsive 8x8 Tailwind CSS grid structure with an elegant dark mode and slate/emerald piece styling.
+- **Classic Chess Logistics**: Handles all standard movement rules across Pawns, Knights, Rooks, Bishops, Queens, and Kings.
+- **Check & Checkmate Detection**: Deep state validation that accurately restricts illegal moves and tracks win/draw logic.
+- **Pawn Promotion**: Seamless automatic promotion implementations.
+- **Clean Architecture**: Functional React components cleanly abstracted from underlying mathematical board constraints.
 
-## React Compiler
+## 💻 Tech Stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **Framework**: [React 19](https://react.dev/)
+- **Build Tool**: [Vite](https://vitejs.dev/)
+- **Styling**: [Tailwind CSS v4](https://tailwindcss.com/)
+- **Language**: Modern JavaScript (ES6+)
 
-## Expanding the ESLint configuration
+## 🚀 Getting Started
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+### Prerequisites
+
+You will need **Node.js** (v18+) and **npm** installed on your system.
+
+### Running Locally
+
+```bash
+# Clone the repository
+git clone https://github.com/GauravMishrabest777/Chess.git
+
+# Navigate into the project folder
+cd Chess
+
+# Install dependencies
+npm install
+
+# Start the development server
+npm run dev
+```
+
+Visit the provided local host address (typically `http://localhost:5173`) in your browser to start playing! 
+
+## 🎮 How to Play
+
+1. **White moves first**. Wait your turn indicated by the dashboard.
+2. **Select a Piece**: Click on any of your pieces. Yellow squares will highlight legal drop targets.
+3. **Capture**: Enemy pieces within range can be captured natively by selecting their underlying square.
+4. The system will automatically compute if your King falls into **"Check"** and block any moves that don't protect it!
