@@ -41,8 +41,19 @@ function App() {
         // Execute move
         const newBoard = board.map(row => [...row]);
         const piece = newBoard[selectedSquare[0]][selectedSquare[1]];
-        newBoard[r][c] = piece;
+        newBoard[r][c] = { ...piece, hasMoved: true };
         newBoard[selectedSquare[0]][selectedSquare[1]] = null;
+        
+        // Handle Castling Rook movement
+        if (piece.type === 'k' && Math.abs(selectedSquare[1] - c) === 2) {
+          if (c === 6) { // Kingside
+            newBoard[r][5] = { ...newBoard[r][7], hasMoved: true };
+            newBoard[r][7] = null;
+          } else if (c === 2) { // Queenside
+            newBoard[r][3] = { ...newBoard[r][0], hasMoved: true };
+            newBoard[r][0] = null;
+          }
+        }
         
         // Auto-promote pawns moving to last rank to Queens for simplicity
         if (piece.type === 'p') {

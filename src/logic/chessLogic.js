@@ -16,30 +16,64 @@ export function getInitialBoard() {
   const board = Array(8).fill(null).map(() => Array(8).fill(null));
 
   const placeRow = (row, color) => {
-    board[row][0] = { type: PIECES.ROOK, color };
-    board[row][1] = { type: PIECES.KNIGHT, color };
-    board[row][2] = { type: PIECES.BISHOP, color };
-    board[row][3] = { type: PIECES.QUEEN, color };
-    board[row][4] = { type: PIECES.KING, color };
-    board[row][5] = { type: PIECES.BISHOP, color };
-    board[row][6] = { type: PIECES.KNIGHT, color };
-    board[row][7] = { type: PIECES.ROOK, color };
+    board[row][0] = { type: PIECES.ROOK, color, hasMoved: false };
+    board[row][1] = { type: PIECES.KNIGHT, color, hasMoved: false };
+    board[row][2] = { type: PIECES.BISHOP, color, hasMoved: false };
+    board[row][3] = { type: PIECES.QUEEN, color, hasMoved: false };
+    board[row][4] = { type: PIECES.KING, color, hasMoved: false };
+    board[row][5] = { type: PIECES.BISHOP, color, hasMoved: false };
+    board[row][6] = { type: PIECES.KNIGHT, color, hasMoved: false };
+    board[row][7] = { type: PIECES.ROOK, color, hasMoved: false };
   };
 
   placeRow(0, COLORS.BLACK);
-  for (let i = 0; i < 8; i++) board[1][i] = { type: PIECES.PAWN, color: COLORS.BLACK };
+  for (let i = 0; i < 8; i++) board[1][i] = { type: PIECES.PAWN, color: COLORS.BLACK, hasMoved: false };
 
   placeRow(7, COLORS.WHITE);
-  for (let i = 0; i < 8; i++) board[6][i] = { type: PIECES.PAWN, color: COLORS.WHITE };
+  for (let i = 0; i < 8; i++) board[6][i] = { type: PIECES.PAWN, color: COLORS.WHITE, hasMoved: false };
 
   return board;
 }
 
-// Check if a square is within board bounds
 export const isValidSquare = (r, c) => r >= 0 && r < 8 && c >= 0 && c < 8;
 
-// Get valid moves for a piece (without checking for King safety/check yet)
-export function getPseudoLegalMoves(board, r, c) {
+export function isSquareUnderAttack(board, r, c, attackingColor) {
+  for (let ir = 0; ir < 8; ir++) {
+    for (let ic = 0; ic < 8; ic++) {
+      const p = board[ir][ic];
+      if (p && p.color === attackingColor) {
+        // we pass checkCastling=false to avoid infinite recursion
+        const moves = getPseudoLegalMoves(board, ir, ic, false);
+        if (moves.some(([mr, mc]) => mr === r && mc === c)) {
+          return true;
+        }
+      }
+    }
+  }
+  return false;
+}
+
+export function findKing(board, color) {
+  for (let r = 0; r < 8; r++) {
+    for (let c = 0; c < 8; c++) {
+      const p = board[r][c];
+      if (p && p.type === PIECES.KING && p.color === color) {
+        return [r, c];
+      }
+    }
+  }
+  return null;
+}
+
+export function isCheck(board, color) {
+  const kingPos = findKing(board, color);
+  if (!kingPos) return false;
+  const enemyColor = color === COLORS.WHITE ? COLORS.BLACK : COLORS.WHITE;
+  return isSquareUnderAttack(board, kingPos[0], kingPos[1], enemyColor);
+}
+
+// checkCastling helps prevent infinite loop when looking for threats
+export function getPseudoLegalMoves(board, r, c, checkCastling = true) {
   const piece = board[r][c];
   if (!piece) return [];
   const moves = [];
@@ -50,10 +84,10 @@ export function getPseudoLegalMoves(board, r, c) {
     const targetPiece = board[targetR][targetC];
     if (targetPiece) {
       if (targetPiece.color !== color) moves.push([targetR, targetC]);
-      return false; // blocked further sliding
+      return false; 
     }
     moves.push([targetR, targetC]);
-    return true; // can continue sliding
+    return true; 
   };
 
   const addSlidingMoves = (directions) => {
@@ -74,10 +108,10 @@ export function getPseudoLegalMoves(board, r, c) {
   if (type === PIECES.PAWN) {
     const dir = color === COLORS.WHITE ? -1 : 1;
     const startRow = color === COLORS.WHITE ? 6 : 1;
-    // push one step
+    // push
     if (isValidSquare(r + dir, c) && !board[r + dir][c]) {
       moves.push([r + dir, c]);
-      // push two steps
+      // double push
       if (r === startRow && !board[r + dir * 2][c]) {
         moves.push([r + dir * 2, c]);
       }
@@ -106,63 +140,52 @@ export function getPseudoLegalMoves(board, r, c) {
   } else if (type === PIECES.KING) {
     const kingMoves = [...straightDirs, ...diagDirs];
     kingMoves.forEach(([dr, dc]) => addMove(r + dr, c + dc));
+
+    // Castling logic!
+    if (checkCastling && !piece.hasMoved && !isCheck(board, color)) {
+      const enemyColor = color === COLORS.WHITE ? COLORS.BLACK : COLORS.WHITE;
+      
+      // Kingside castling
+      const rightRook = board[r][7];
+      if (rightRook && rightRook.type === PIECES.ROOK && !rightRook.hasMoved) {
+        if (!board[r][5] && !board[r][6]) {
+          // ensure squares aren't attacked
+          if (!isSquareUnderAttack(board, r, 5, enemyColor) && !isSquareUnderAttack(board, r, 6, enemyColor)) {
+            moves.push([r, 6]);
+          }
+        }
+      }
+      
+      // Queenside castling
+      const leftRook = board[r][0];
+      if (leftRook && leftRook.type === PIECES.ROOK && !leftRook.hasMoved) {
+        if (!board[r][1] && !board[r][2] && !board[r][3]) {
+          if (!isSquareUnderAttack(board, r, 2, enemyColor) && !isSquareUnderAttack(board, r, 3, enemyColor)) {
+            moves.push([r, 2]);
+          }
+        }
+      }
+    }
   }
 
   return moves;
 }
 
-// Find king's position
-export function findKing(board, color) {
-  for (let r = 0; r < 8; r++) {
-    for (let c = 0; c < 8; c++) {
-      const p = board[r][c];
-      if (p && p.type === PIECES.KING && p.color === color) {
-        return [r, c];
-      }
-    }
-  }
-  return null;
-}
-
-// Check if a specific color's king is currently attacked
-export function isCheck(board, color) {
-  const kingPos = findKing(board, color);
-  if (!kingPos) return false; // shouldn't happen
-  const [kr, kc] = kingPos;
-  
-  // check all enemy pieces
-  const enemyColor = color === COLORS.WHITE ? COLORS.BLACK : COLORS.WHITE;
-  for (let r = 0; r < 8; r++) {
-    for (let c = 0; c < 8; c++) {
-      const p = board[r][c];
-      if (p && p.color === enemyColor) {
-        const moves = getPseudoLegalMoves(board, r, c);
-        if (moves.some(([mr, mc]) => mr === kr && mc === kc)) {
-          return true;
-        }
-      }
-    }
-  }
-  return false;
-}
-
-// Get purely strict valid moves, eliminating those that leave king in check
 export function getValidMoves(board, r, c) {
-  const pseudoMoves = getPseudoLegalMoves(board, r, c);
+  const pseudoMoves = getPseudoLegalMoves(board, r, c, true);
   const piece = board[r][c];
   if (!piece) return [];
   
   const validMoves = [];
-  // simulate each move and see if it leaves the king in check
   for (const [mr, mc] of pseudoMoves) {
-    // deep clone board loosely
     const tempBoard = board.map(row => [...row]);
     
-    // apply move
+    // castling pseudo-validation is already handled, but we apply move anyway
     tempBoard[mr][mc] = piece;
     tempBoard[r][c] = null;
     
-    // if not in check, it's valid
+    // Check if king is safe AFTER move
+    // (Note: castling legality requires intermediate squares to be safe too, which we handled in getPseudoLegalMoves)
     if (!isCheck(tempBoard, piece.color)) {
       validMoves.push([mr, mc]);
     }
@@ -170,7 +193,6 @@ export function getValidMoves(board, r, c) {
   return validMoves;
 }
 
-// Check if a player has any valid moves left (Checkmate or Stalemate)
 export function hasValidMoves(board, color) {
   for (let r = 0; r < 8; r++) {
     for (let c = 0; c < 8; c++) {
